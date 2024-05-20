@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 public class StudentRestController {
 
@@ -48,6 +49,10 @@ public class StudentRestController {
         return studentRepository.findById(id).get();
     }
 
+    @GetMapping("/studentsByProgramId")
+    public List<Student> listStudentByProgramId(@RequestParam String programId){
+        return studentRepository.findByProgramId(programId);
+    }
     @GetMapping("/students/{code}/payments")
     public List<Payment> findPaymentByStudentCode(@PathVariable String code){
         return paymentRepository.findByStudentCode(code);
@@ -66,9 +71,16 @@ public class StudentRestController {
 
     @GetMapping(value = "paymentFile/{paymentId}", produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException {
-        Payment payment = paymentRepository.findById(paymentId).get();
-        String filePath = payment.getFile();
-        return Files.readAllBytes(Path.of(URI.create(filePath)));
+       return paymentService.loadPaymentFile(paymentId);
+    }
+
+    @GetMapping("/payments/byStatus")
+    public List<Payment> paymentsByStatus(@RequestParam PaymentStatus status){
+        return paymentRepository.findByStatus(status);
+    }
+    @GetMapping("/payments/byType")
+    public List<Payment> paymentsByType(@RequestParam PaymentType type){
+        return paymentRepository.findByType(type);
     }
 
     @PutMapping("/payments/updateStatus/{paymentId}")

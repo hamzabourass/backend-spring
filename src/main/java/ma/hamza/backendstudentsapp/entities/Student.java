@@ -13,6 +13,7 @@ public class Student {
     private String code;
     private String firstName;
     private String lastName;
+    private String programId;
     private String email;
     private String photo;
 

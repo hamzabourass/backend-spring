@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,9 +43,17 @@ public class PaymentService {
                 .type(paymentType)
                 .amount(amount)
                 .student(student)
-                .status(PaymentStatus.CREATED).file(filePath.toUri().toString()).build();
+                .status(PaymentStatus.CREATED)
+                .file(filePath.toUri().toString())
+                .build();
 
         return paymentRepository.save(payment);
 
+    }
+
+    public byte[] loadPaymentFile(Long paymentId) throws IOException {
+        Payment payment = paymentRepository.findById(paymentId).get();
+        String filePath = payment.getFile();
+        return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
 }
