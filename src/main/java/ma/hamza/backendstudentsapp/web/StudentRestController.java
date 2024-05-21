@@ -1,6 +1,7 @@
 package ma.hamza.backendstudentsapp.web;
 
 import lombok.AllArgsConstructor;
+import ma.hamza.backendstudentsapp.dtos.PaymentDTO;
 import ma.hamza.backendstudentsapp.entities.Payment;
 import ma.hamza.backendstudentsapp.entities.Student;
 import ma.hamza.backendstudentsapp.enums.PaymentStatus;
@@ -59,13 +60,10 @@ public class StudentRestController {
     }
 
     @PostMapping(value = "/payments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Payment savePayments(@RequestParam MultipartFile file,
-                                LocalDate date,
-                                double amount,
-                                PaymentType paymentType,
-                                String studentCode) throws IOException {
+    public Payment savePayments(@RequestParam("file") MultipartFile file,
+                                PaymentDTO paymentDTO) throws IOException {
 
-        return paymentService.savePayment(file,date,amount,paymentType,studentCode);
+        return paymentService.savePayment(file,paymentDTO);
 
     }
 

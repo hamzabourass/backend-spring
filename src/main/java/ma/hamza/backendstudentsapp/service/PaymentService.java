@@ -1,6 +1,7 @@
 package ma.hamza.backendstudentsapp.service;
 
 import lombok.AllArgsConstructor;
+import ma.hamza.backendstudentsapp.dtos.PaymentDTO;
 import ma.hamza.backendstudentsapp.entities.Payment;
 import ma.hamza.backendstudentsapp.entities.Student;
 import ma.hamza.backendstudentsapp.enums.PaymentStatus;
@@ -26,10 +27,7 @@ public class PaymentService {
     private StudentRepository studentRepository;
 
     public Payment savePayment(MultipartFile file,
-                               LocalDate date,
-                               double amount,
-                               PaymentType paymentType,
-                               String studentCode) throws IOException {
+                               PaymentDTO paymentDTO) throws IOException {
         Path path = Paths.get(System.getProperty("user.home"),"students-app-files","payments");
         if(!Files.exists(path)){
             Files.createDirectories(path);
@@ -38,10 +36,10 @@ public class PaymentService {
         Path filePath = Paths.get(System.getProperty("user.home"),"students-app-files","payments",fileId+".pdf");
         Files.copy(file.getInputStream(),filePath);
 
-        Student student = studentRepository.findByCode(studentCode);
+        Student student = studentRepository.findByCode(paymentDTO.getStudentCode());
         Payment payment = Payment.builder()
-                .type(paymentType)
-                .amount(amount)
+                .type(paymentDTO.getType())
+                .amount(paymentDTO.getAmount())
                 .student(student)
                 .status(PaymentStatus.CREATED)
                 .file(filePath.toUri().toString())
