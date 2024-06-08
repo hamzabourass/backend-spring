@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class BackendStudentsAppApplication {
     }
 
     @Bean
+    @Profile("dev")
     CommandLineRunner commandLineRunner(StudentRepository studentRepository, PaymentRepository paymentRepository){
         return args -> {
             studentRepository.save(Student.builder().id("STU_" + UUID.randomUUID().toString()).code("112255").programId("IIR").firstName("Hamza").build());

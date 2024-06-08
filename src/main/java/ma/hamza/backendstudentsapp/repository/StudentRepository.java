@@ -9,4 +9,5 @@ public interface StudentRepository extends JpaRepository<Student,String> {
     Student findByCode(String code);
     List<Student> findByProgramId(String programId);
 
+    void deleteByCode(String code);
 }
