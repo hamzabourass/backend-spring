@@ -20,10 +20,7 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: mvn clean package
-
-      - name: Run unit tests
-        run: mvn test
+        run: mvn clean package -DskipTests=false
 
       - name: Login to AWS ECR
         run: |
