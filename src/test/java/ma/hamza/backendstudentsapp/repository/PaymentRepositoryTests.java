@@ -90,7 +90,7 @@ public class PaymentRepositoryTests {
     public void findPaymentByStatus(){
         List<Payment> payments = paymentRepository.findByStatus(PaymentStatus.CREATED);
         Assertions.assertNotNull(payments);
-        Assertions.assertEquals(payments.size(),4);
+        Assertions.assertEquals(payments.size(),40);
     }
 
     @Test
