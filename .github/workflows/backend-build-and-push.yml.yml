@@ -52,7 +52,10 @@ jobs:
           IMAGE_TAG=714714593268.dkr.ecr.us-east-1.amazonaws.com/spring-angular:backend_${{ github.sha }}
           docker build -t $IMAGE_TAG .
           docker push $IMAGE_TAG
+          echo "::set-output name=image_tag::$IMAGE_TAG"
+        id: build-and-push
 
       # Optional: Clean up Docker images
       - name: Clean up Docker images
-        run: docker rmi $IMAGE_TAG
+        if: always()
+        run: docker rmi ${{ steps.build-and-push.outputs.image_tag }}
