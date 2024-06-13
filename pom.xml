@@ -14,11 +14,6 @@
     <name>backend-students-app</name>
     <description>backend-students-app</description>
     <properties>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
-        <sonar.login>sqp_eb6beedfe0e0822822f90eb991a86a40c720550f</sonar.login>
-        <sonar.projectKey>student-payment-project</sonar.projectKey>
-        <sonar.projectName>student-payment-project</sonar.projectName>
-
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
