@@ -87,7 +87,7 @@ jobs:
       - name: Push Docker Image to ECR
         if: success()
         run: |
-          IMAGE_TAG=${{ steps.build.outputs.image_tag }}
+          IMAGE_TAG=${{ steps.build-and-push.outputs.image_tag }}
           docker push $IMAGE_TAG
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
