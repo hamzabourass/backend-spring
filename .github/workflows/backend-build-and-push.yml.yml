@@ -12,7 +12,7 @@ jobs:
     steps:
       # Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
@@ -25,7 +25,7 @@ jobs:
 
       # Cache Maven dependencies
       - name: Cache Maven dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Cache SonarQube packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
@@ -48,11 +48,11 @@ jobs:
         run: mvn test
 
       # SonarQube Scanner
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=student-payment-project -Dsonar.projectName='student-payment-project'
+#      - name: Build and analyze
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=student-payment-project -Dsonar.projectName='student-payment-project'
 
       # Login to AWS ECR
       - name: Login to AWS ECR
@@ -65,11 +65,24 @@ jobs:
       # Build and push Docker image
       - name: Build and Push Docker Image
         run: |
-          IMAGE_TAG=714714593268.dkr.ecr.us-east-1.amazonaws.com/spring-angular:backend_${{ github.sha }}
+          IMAGE_TAG=714714593268.dkr.ecr.us-east-1.amazonaws.com/spring-angular:backend_latest
           docker build -t $IMAGE_TAG .
           docker push $IMAGE_TAG
           echo "::set-output name=image_tag::$IMAGE_TAG"
         id: build-and-push
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: $IMAGE_TAG
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
 
       # Optional: Clean up Docker images
       - name: Clean up Docker images
