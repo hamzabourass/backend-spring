@@ -95,7 +95,7 @@ public class StudentsRepositoryTests {
 
         // Assert
         Assertions.assertNotNull(students);
-        Assertions.assertEquals(students.size(), 4);
+        Assertions.assertEquals(4,students.size());
 
     }
 
@@ -119,7 +119,7 @@ public class StudentsRepositoryTests {
 
         // Assert
         Assertions.assertNotNull(student2);
-        Assertions.assertEquals(student.getId(), student2.getId());
+        Assertions.assertEquals( student2.getId() , student.getId());
 
     }
 
@@ -129,7 +129,7 @@ public class StudentsRepositoryTests {
         Student student = studentRepository.findByCode("18795");
 
         Assertions.assertNotNull(student);
-        Assertions.assertEquals(student.getCode(), "18795");
+        Assertions.assertEquals("18795", student.getCode());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class StudentsRepositoryTests {
 
         List<Student> students = studentRepository.findByProgramId("MIAGE");
         Assertions.assertNotNull(students);
-        Assertions.assertEquals(students.size(), 2);
+        Assertions.assertEquals(2, students.size());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class StudentsRepositoryTests {
         Student updatedStudent = studentRepository.findById(student.getId()).get();
 
         Assertions.assertNotNull(updatedStudent);
-        Assertions.assertEquals(updatedStudent.getFirstName(), "Youssofita");
+        Assertions.assertEquals("Youssofita", updatedStudent.getFirstName());
     }
 
 }

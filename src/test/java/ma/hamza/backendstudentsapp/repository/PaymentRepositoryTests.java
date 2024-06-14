@@ -81,7 +81,7 @@ public class PaymentRepositoryTests {
     public void findPaymentByStudentCode(){
         List<Payment> payments = paymentRepository.findByStudentCode("112255");
         Assertions.assertNotNull(payments);
-        Assertions.assertEquals(payments.size(),10);
+        Assertions.assertEquals(10,payments.size());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class PaymentRepositoryTests {
     public void findPaymentByStatus(){
         List<Payment> payments = paymentRepository.findByStatus(PaymentStatus.CREATED);
         Assertions.assertNotNull(payments);
-        Assertions.assertEquals(payments.size(),40);
+        Assertions.assertEquals(40,payments.size());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class PaymentRepositoryTests {
     public void findPaymentByType(){
         List<Payment> payments = paymentRepository.findByType(PaymentType.CASH);
         Assertions.assertNotNull(payments);
-        Assertions.assertEquals(payments.size(),40);
+        Assertions.assertEquals(40,payments.size());
 
     }
 
