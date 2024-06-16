@@ -4,13 +4,16 @@ import ma.hamza.backendstudentsapp.entities.AppRole;
 import ma.hamza.backendstudentsapp.entities.AppUser;
 import ma.hamza.backendstudentsapp.repository.AppRoleRepository;
 import ma.hamza.backendstudentsapp.repository.AppUserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,4 +59,21 @@ public class AccountServiceImpl implements AccountService {
     public List<AppUser> listUsers() {
         return appUserRepository.findAll();
     }
+
+    @Override
+    public List<AppRole> listRoles() {
+        return appRoleRepository.findAll();
+    }
+
+    @Override
+    public ResponseEntity<AppUser> authenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Ensure the principal is an instance of AppUser
+        if (authentication.getPrincipal() instanceof AppUser currentUser) {
+            return ResponseEntity.ok(currentUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
 }

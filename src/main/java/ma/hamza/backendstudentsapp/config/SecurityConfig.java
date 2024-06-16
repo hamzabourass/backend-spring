@@ -11,7 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,39 +28,42 @@ public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-        http.sessionManagement(sess->sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authorizeHttpRequests(auth-> auth.requestMatchers("/api/auth/**").permitAll());
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.POST,"/api/payments/**").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.GET,"/api/payments/**").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.GET,"/api/students/**").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.GET,"/api/studentsByProgramId").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.GET,"/api/paymentFile/").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.POST,"/api/swagger-config").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.POST,"/api/roles").hasAuthority("ADMIN"));
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.POST,"/api/addRoleToUser").hasAuthority("ADMIN"));
-        http.authenticationProvider(authenticationProvider);
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/payments/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/payments/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/roles").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/roles").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/addRoleToUser").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/students/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/studentsByProgramId").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/paymentFile/").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/swagger-config").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/profile").hasAnyAuthority("USER","ADMIN"))
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(authenticationEntryPoint))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8080","http//localhost:4200"));
+        configuration.setAllowedOrigins(List.of("http://localhost:8787","http//localhost:4200"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 
