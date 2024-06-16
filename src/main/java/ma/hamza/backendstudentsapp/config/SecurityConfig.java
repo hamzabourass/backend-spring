@@ -63,13 +63,24 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8787","http//localhost:4200"));
+        // Specify your front-end URL
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+
+        // Specify allowed methods
         configuration.setAllowedMethods(List.of("*"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 
+        // Specify allowed headers
+        configuration.setAllowedHeaders(List.of("*"));
+
+        // Allow credentials
+       // configuration.setAllowCredentials(true);
+
+        // Expose headers (optional)
+        configuration.setExposedHeaders(List.of("Authorization"));
+
+        // Apply this configuration to all paths
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
