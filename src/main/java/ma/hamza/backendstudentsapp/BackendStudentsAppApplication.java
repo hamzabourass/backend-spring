@@ -1,11 +1,13 @@
 package ma.hamza.backendstudentsapp;
 
+import ma.hamza.backendstudentsapp.entities.AppRole;
 import ma.hamza.backendstudentsapp.entities.Payment;
 import ma.hamza.backendstudentsapp.entities.Student;
 import ma.hamza.backendstudentsapp.enums.PaymentStatus;
 import ma.hamza.backendstudentsapp.enums.PaymentType;
 import ma.hamza.backendstudentsapp.repository.PaymentRepository;
 import ma.hamza.backendstudentsapp.repository.StudentRepository;
+import ma.hamza.backendstudentsapp.service.AccountService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,8 +28,13 @@ public class BackendStudentsAppApplication {
 
     @Bean
     @Profile("dev")
-    CommandLineRunner commandLineRunner(StudentRepository studentRepository, PaymentRepository paymentRepository){
+    CommandLineRunner commandLineRunner(StudentRepository studentRepository, PaymentRepository paymentRepository, AccountService accountService){
         return args -> {
+
+            accountService.addNewRole(new AppRole(null,"USER"));
+            accountService.addNewRole(new AppRole(null,"ADMIN"));
+
+
             studentRepository.save(Student.builder().id("STU_" + UUID.randomUUID().toString()).code("112255").programId("IIR").firstName("Hamza").build());
             studentRepository.save(Student.builder().id("STU_" + UUID.randomUUID().toString()).code("546008").programId("MIAGE").firstName("Youssef").build());
             studentRepository.save(Student.builder().id("STU_" + UUID.randomUUID().toString()).code("67690").programId("GC").firstName("Oussama").build());
