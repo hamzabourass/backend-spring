@@ -9,6 +9,8 @@ import ma.hamza.backendstudentsapp.enums.PaymentType;
 import ma.hamza.backendstudentsapp.repository.PaymentRepository;
 import ma.hamza.backendstudentsapp.repository.StudentRepository;
 import ma.hamza.backendstudentsapp.service.PaymentService;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
-public class StudentRestController {
+public class StudentRestController implements HealthIndicator {
 
     private StudentRepository studentRepository;
     private PaymentRepository paymentRepository;
@@ -90,5 +92,17 @@ public class StudentRestController {
 
     }
 
+    @Override
+    public Health getHealth(boolean includeDetails) {
+        return HealthIndicator.super.getHealth(includeDetails);
+    }
+    @Override
+    public Health health() {
 
+        List<Student> students = studentRepository.findAll();
+        if (students.isEmpty()) {
+            return Health.down().build();
+        }
+        return Health.up().build();
+    }
 }
