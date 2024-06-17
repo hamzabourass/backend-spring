@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import ma.hamza.backendstudentsapp.dtos.LoginUserDto;
 import ma.hamza.backendstudentsapp.dtos.RegisterUserDto;
 import ma.hamza.backendstudentsapp.dtos.TokenDTO;
+import ma.hamza.backendstudentsapp.email.EmailService;
 import ma.hamza.backendstudentsapp.entities.AppUser;
 import ma.hamza.backendstudentsapp.repository.AppUserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,13 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 @Transactional
 public class AuthenticationService {
+
     private final AppUserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
-
     private final JwtService jwtService;
+    private final EmailService emailService;
 
 
     public AppUser signup(RegisterUserDto input) {
@@ -51,5 +51,8 @@ public class AuthenticationService {
         tokenDTO.setRefreshToken(refreshToken);
         tokenDTO.setAccessToken(jwtService.refreshToken(refreshToken));
         return tokenDTO;
+    }
+
+    private void sendValidationEmail(RegisterUserDto registerUserDto) {
     }
 }
