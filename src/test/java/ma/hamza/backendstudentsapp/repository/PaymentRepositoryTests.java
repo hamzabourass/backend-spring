@@ -65,6 +65,7 @@ public class PaymentRepositoryTests {
             paymentRepository.save(payment);
         }
     }
+    // Unit tests
 
     @Test
     @Transactional
