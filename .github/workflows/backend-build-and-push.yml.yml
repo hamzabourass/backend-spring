@@ -99,10 +99,11 @@ jobs:
         if: always()
         run: docker rmi ${{ steps.build-and-push.outputs.image_tag }}
 
+      # Trigger the deploy workflow
       - name: Trigger Deploy Workflow
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repository: hamzabourass/https://github.com/hamzabourass/Angular-Spring
+          repository: hamzabourass/Angular-Spring
           event-type: deploy
           client-payload: '{"image_tag": "${{ steps.build-and-push.outputs.image_tag }}", "environment": "staging"}'
